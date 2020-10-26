@@ -1,4 +1,4 @@
-# Ohjelmistotuotanto-kurssin harjoitustnto-kurssin
+# Ohjelmistotuotanto-kurssin harjoitustyö
 
 ## Tehtävät
 
