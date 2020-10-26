@@ -1,0 +1,113 @@
+commit 8a0e232f7e242f0a3aef7c36ca543afedf272cc7
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:31:17 2020 +0200
+
+    poista file1 ja siirrä file2
+
+ tiedostoja/file2             | 0
+ tiedostoja/{file1 => file22} | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 1a8fb0050e42b75f78857ba45fd8718dcf56a0ba
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:29:48 2020 +0200
+
+    lisää tiedostoja
+
+ tiedostoja/file1 | 0
+ tiedostoja/file2 | 0
+ tiedostoja/file3 | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 9dda6efba0698e636b93fb44961d841e26a4a7ad
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:25:22 2020 +0200
+
+    lisää ja poista ekasta ja kolmannesta
+
+ eka.txt    | 2 +-
+ kolmas.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit a311724d3f0e392d8dc71258e1420061588b7b95
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:24:17 2020 +0200
+
+    siirrä tiedosto
+
+ tiedosto.txt => eka.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit dd94f04a8fc5d935c120cebd7ab8aece1d24e15b
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:23:57 2020 +0200
+
+    poista toinen
+
+ toinen.txt | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 9b5cc65d989fd10a42e1decedf8112a52ab68e47
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:23:29 2020 +0200
+
+    vielä lisää tekstiä
+
+ tiedosto.txt | 7037 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 7035 insertions(+), 2 deletions(-)
+
+commit 73cdbb38685f9d02842f4a28a56c304602171cfc
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:22:23 2020 +0200
+
+    lisää tekstiä
+
+ tiedosto.txt | 1775 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1775 insertions(+)
+
+commit 8f62bd2f0a59132f0c1b0a2a03e31bdc446cc628
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:20:26 2020 +0200
+
+    uusi kansio ja tiedosto
+
+ stuff/jokin.tiedosto | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 792f04478b73db7556bded080c21ca76a2ce1466
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:19:53 2020 +0200
+
+    muokattu toista ja kolmasta
+
+ kolmas.txt | 1 +
+ toinen.txt | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 7dc5a96748579e06b35e6e86953dc5b5b5e5c7c7
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:19:22 2020 +0200
+
+    kolmas lisätty
+
+ kolmas.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 6dacd86e44283e051722ad42d6ab9cc67310e3c5
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:18:38 2020 +0200
+
+    muutos ja lisäys
+
+ tiedosto.txt | 1 +
+ toinen.txt   | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 0c3573fcf06b151c1e71d493a60a7f7060622b36
+Author: Mitja Karhusaari <mitja@karhusaari.me>
+Date:   Mon Oct 26 17:16:21 2020 +0200
+
+    tiedosto.txt luotu
+
+ tiedosto.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
