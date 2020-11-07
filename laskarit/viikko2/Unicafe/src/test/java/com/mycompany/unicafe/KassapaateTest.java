@@ -137,4 +137,22 @@ public class KassapaateTest {
     assertEquals("myytyjen edullisten lounaiden määrä on virheellinen", 0, paate.edullisiaLounaitaMyyty());
     assertEquals("myytyjen maukkaiden lounaiden määrä on virheellinen", 0, paate.maukkaitaLounaitaMyyty());
   }
+
+  @Test
+  public void kateisinLataaminenKortilleToimii() {
+    Maksukortti kortti = new Maksukortti(0);
+    paate.lataaRahaaKortille(kortti, 100);
+
+    assertEquals("kassan rahamaara on viheellinen", 1100, paate.kassassaRahaa());
+    assertEquals("kortin saldo on virheelline", 100, kortti.saldo());
+  }
+
+  @Test
+  public void negatiivisenSummanLataaminenKortelleEiTeeMitaan() {
+    Maksukortti kortti = new Maksukortti(0);
+    paate.lataaRahaaKortille(kortti, -100);
+
+    assertEquals("kassan rahamaara on viheellinen", 1000, paate.kassassaRahaa());
+    assertEquals("kortin saldo on virheelline", 0, kortti.saldo());
+  }
 }
