@@ -11,8 +11,8 @@
 
 ### Dokumentaatio
 
- - [docs/requirements.md](Vaatimusmäärittely)
+ - [Vaatimusmäärittely](docs/requirements.md)
 
 ### Työaikakirjanpito
 
- - [timesheet.md](Työaikakirjanpito)
+ - [Työaikakirjanpito](timesheet.md)
