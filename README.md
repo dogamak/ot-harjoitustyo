@@ -1,18 +1,15 @@
 # Ohjelmistotuotanto-kurssin harjoitustyö
 
-## Tehtävät
+## Suorittaminen
 
-### Viikko 1
+```shell
+$ mvn compile exec:java -Dexec.mainClass=ohte.ui.Application
+```
 
- - [komentorivi.txt](laskarit/viikko1/komentorivi.txt)
- - [gitlog.txt](laskarit/viikko1/gitlog.txt)
-
-## Projekti
-
-### Dokumentaatio
+## Dokumentaatio
 
  - [Vaatimusmäärittely](docs/requirements.md)
 
-### Työaikakirjanpito
+## Työaikakirjanpito
 
  - [Työaikakirjanpito](timesheet.md)
