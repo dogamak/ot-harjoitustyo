@@ -2,8 +2,11 @@
 
 ## Suorittaminen
 
+Sovellus voidaan suorittaa käyttäen Mavenia seuraavalla komennolla,
+joka kääntää sovelluksen ja käynnistää sen graafisen käyttöliittymän:
+
 ```shell
-$ mvn compile exec:java -Dexec.mainClass=ohte.ui.Application
+mvn compile exec:java
 ```
 
 ## Dokumentaatio
