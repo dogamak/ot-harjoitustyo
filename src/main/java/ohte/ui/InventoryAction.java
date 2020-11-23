@@ -24,15 +24,9 @@ class InventoryAction {
   /** File to be created or to be opened. */
   File file;
 
-  /**
-   * Credentials for authentication or for creating the superuser account.
-   */
-  Credentials credentials;
-
-  InventoryAction(Type type, File file, Credentials credentials) {
+  InventoryAction(Type type, File file) {
     this.type = type;
     this.file = file;
-    this.credentials = credentials;
   }
 
   /**
@@ -48,12 +42,5 @@ class InventoryAction {
    */
   File getFile() {
     return file;
-  }
-
-  /**
-   * Get credentials procided by the user.
-   */
-  Credentials getCredentials() {
-    return credentials;
   }
 }

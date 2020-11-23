@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.DialogPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -76,9 +77,6 @@ public class WelcomeDialog extends Dialog<InventoryAction> {
       type = InventoryAction.Type.OPEN;
     }
 
-    InventoryDialog invDialog = new InventoryDialog(type, file);
-    Credentials credentials = invDialog.showAndWait().orElse(null);
-
-    return new InventoryAction(type, file, credentials);
+    return new InventoryAction(type, file);
   }
 }

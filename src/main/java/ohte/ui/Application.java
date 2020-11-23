@@ -1,12 +1,14 @@
 package ohte.ui;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 
@@ -41,22 +43,64 @@ public class Application extends javafx.application.Application {
       return;
 
     if (result.getType() == InventoryAction.Type.CREATE) {
-      ohte.domain.Application.getSingleton()
-        .createInventory(result.getFile().getAbsolutePath(), result.getCredentials());
+      createInventoryFile(result.getFile());
     } else if (result.getType() == InventoryAction.Type.OPEN) {
-      Credentials credentials = result.getCredentials();
-      boolean success;
-
-      do {
-        success = ohte.domain.Application.getSingleton()
-          .openInventory(result.getFile().getAbsolutePath(), result.getCredentials());
-
-        if (!success) {
-          InventoryDialog retryDialog = new InventoryDialog(InventoryAction.Type.OPEN, result.getFile());
-          credentials = retryDialog.showAndWait().orElse(null);
-        }
-      } while (!success);
+      openInventoryFile(result.getFile());
     }
+  }
+
+  private void openInventoryFile(File file) {
+    boolean success;
+    boolean first = true;
+
+    do {
+      CredentialsDialog retryDialog = new CredentialsDialog("Unlock");
+
+      String message = "Provide valid credentials to unlock the inventory file:";
+
+      if (!first) {
+        message = "Authentication failed!\n" + message;
+      }
+
+      Label messageLabel = new Label(message);
+      messageLabel.setWrapText(true);
+
+      retryDialog.getMessagePane().getChildren().add(messageLabel);
+
+      Credentials credentials = retryDialog
+        .showAndWait()
+        .map(r -> r.getCredentials())
+        .orElse(null);
+
+      success = ohte.domain.Application.getSingleton()
+        .openInventory(file.getAbsolutePath(), credentials);
+
+      first = false;
+    } while (!success);
+  }
+
+  private void createInventoryFile(File file) {
+    CredentialsDialog invDialog = new CredentialsDialog("Create superuser");
+
+    Label message = new Label(String.format(
+      "Creating new inventory file %s.\nPlease give credentials " +
+      "for creating a superuser account:",
+      file.getName()
+    ));
+
+    message.setWrapText(true);
+
+    invDialog
+      .getMessagePane()
+      .getChildren()
+      .add(message);
+
+    Credentials credentials = invDialog.showAndWait()
+      .map(result -> result.getCredentials())
+      .orElse(null);
+
+    ohte.domain.Application.getSingleton()
+      .createInventory(file.getAbsolutePath(), credentials);
   }
 
   /**
