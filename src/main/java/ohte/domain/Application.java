@@ -164,4 +164,16 @@ public class Application {
 
     return false;
   }
+
+  public void createAccount(Credentials credentials) {
+    Account normal = new Account(credentials.getUsername());
+    normal.setRole(Account.Role.NORMAL);
+    normal.setPassword(credentials.getPassword());
+
+    try {
+      storage.saveAccount(normal);
+    } catch (SQLException sqle) {
+      sqle.printStackTrace();
+    }
+  }
 }

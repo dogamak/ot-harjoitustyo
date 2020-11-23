@@ -9,6 +9,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import static javafx.collections.FXCollections.observableList;
@@ -18,6 +19,7 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import ohte.domain.Application;
+import ohte.domain.Credentials;
 import ohte.storage.Account;
 
 /**
@@ -84,7 +86,18 @@ public class AccountTabController {
    * clicks the {@link Button} for creating a new account.
    */
   @FXML
-  private void handleCreateAccount(ActionEvent event) {}
+  private void handleCreateAccount(ActionEvent event) {
+    CredentialsDialog dialog = new CredentialsDialog("Create normal account");
+
+    Label message = new Label("Input credentials for a new account:");
+    dialog.getMessagePane().getChildren().add(message);
+
+    Credentials credentials = dialog.showAndWait()
+      .map(r -> r.getCredentials())
+      .orElse(null);
+
+    Application.getSingleton().createAccount(credentials);
+  }
 
   /**
    * Event handler which is called from the FXML whenever the user
