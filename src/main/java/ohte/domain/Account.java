@@ -1,4 +1,4 @@
-package ohte.storage;
+package ohte.domain;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -9,20 +9,17 @@ public class Account {
   /**
    * Username of the account. Used for identifying the account.
    */
-  @StorageObjectField(unique = true)
   String username;
 
   /**
    * Role of the account. Determines which operations the account has access to.
    * Default value is {@link Role.NORMAL}.
    */
-  @StorageObjectField
   Role role;
 
   /**
    * Password hash created using BCrypt.
    */
-  @StorageObjectField(name = "password", hidden = true)
   String passwordHash;
 
   /**
@@ -41,7 +38,7 @@ public class Account {
     /**
      * Converts a string to a {@link Role} value.
      */
-    static Role fromString(String value) {
+    public static Role fromString(String value) {
       if (value.equals("NORMAL")) {
         return Role.NORMAL;
       } else if (value.equals("SUPERUSER")) {
@@ -87,7 +84,15 @@ public class Account {
    */
   public void setPassword(String cleartext) {
     String salt = BCrypt.gensalt(10);
-    passwordHash = BCrypt.hashpw(cleartext, salt);
+    setPasswordHash(BCrypt.hashpw(cleartext, salt));
+  }
+
+  public void setPasswordHash(String hash) {
+    passwordHash = hash;
+  }
+
+  public String getPasswordHash() {
+    return passwordHash;
   }
 
   /**

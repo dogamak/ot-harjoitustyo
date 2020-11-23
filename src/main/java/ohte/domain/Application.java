@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleObjectProperty;
 
-import ohte.storage.Account;
-import ohte.storage.FileStorage;
+import ohte.domain.Account;
 import ohte.storage.Storage;
+import ohte.storage.AccountSqlitePersister;
 
 /**
  * Class containing the application state and core bussines logic.
@@ -26,7 +26,7 @@ public class Application {
   /**
    * Storage backend of the application.
    */
-  Storage storage;
+  Storage storage = new Storage();
 
   /**
    * Current authenticated account.
@@ -110,6 +110,14 @@ public class Application {
    */
   public Application() {}
 
+  private void synchronizeToFile(String path) {
+    try {
+      storage.synchronize(new AccountSqlitePersister(path));
+    } catch (SQLException sqle) {
+      sqle.printStackTrace();
+    }
+  }
+
   /**
    * Creates a new inventory and a superuser account with the provided credentials.
    *
@@ -121,18 +129,14 @@ public class Application {
    * @see FileStorage#create
    */
   public void createInventory(String path, Credentials credentials) {
-    try {
-      storage = FileStorage.create(path);
+    synchronizeToFile(path);
 
-      Account superuser = new Account(credentials.getUsername());
-      superuser.setRole(Account.Role.SUPERUSER);
-      superuser.setPassword(credentials.getPassword());
+    Account superuser = new Account(credentials.getUsername());
+    superuser.setRole(Account.Role.SUPERUSER);
+    superuser.setPassword(credentials.getPassword());
 
-      storage.saveAccount(superuser);
-      account = superuser;
-    } catch (SQLException sqle) {
-      sqle.printStackTrace();
-    }
+    storage.saveAccount(superuser);
+    account = superuser;
   }
 
   /**
@@ -146,23 +150,17 @@ public class Application {
    * @see FileStorage#open
    */
   public boolean openInventory(String path, Credentials credentials) {
-    try {
-      storage = FileStorage.open(path);
+    synchronizeToFile(path);
 
-      Account acc = storage.getAccountByUsername(credentials.getUsername());
+    Account acc = storage.getAccountByUsername(credentials.getUsername());
 
-      boolean result = acc.checkPassword(credentials.getPassword());
+    boolean result = acc.checkPassword(credentials.getPassword());
 
-      if (result) {
-        account = acc;
-      }
-
-      return result;
-    } catch (SQLException sqle) {
-      sqle.printStackTrace();
+    if (result) {
+      account = acc;
     }
 
-    return false;
+    return result;
   }
 
   public void createAccount(Credentials credentials) {
@@ -170,10 +168,6 @@ public class Application {
     normal.setRole(Account.Role.NORMAL);
     normal.setPassword(credentials.getPassword());
 
-    try {
-      storage.saveAccount(normal);
-    } catch (SQLException sqle) {
-      sqle.printStackTrace();
-    }
+    storage.saveAccount(normal);
   }
 }

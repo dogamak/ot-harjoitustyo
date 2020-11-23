@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
@@ -12,6 +13,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.collections.ObservableSet;
+import javafx.collections.ObservableList;
+import javafx.collections.SetChangeListener.Change;
 import static javafx.collections.FXCollections.observableList;
 
 import org.kordamp.ikonli.fontawesome.FontAwesome;
@@ -20,7 +24,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import ohte.domain.Application;
 import ohte.domain.Credentials;
-import ohte.storage.Account;
+import ohte.domain.Account;
 
 /**
  * Controller for the Accounts tab.
@@ -62,15 +66,20 @@ public class AccountTabController {
 
     accountTable.getColumns().addAll(usernameColumn, roleColumn);
 
-    List<Account> accounts;
+    ObservableSet<Account> accounts = Application.getSingleton()
+      .getStorage()
+      .getAccountsObservable();
 
-    try {
-      accounts = Application.getSingleton().getStorage().getAccounts();
-    } catch (SQLException sqle) {
-      accounts = new ArrayList<>();
-    }
+    ObservableList<Account> rows = observableList(accounts.stream().collect(Collectors.toList()));
 
-    accountTable.setItems(observableList(accounts));
+    accounts.addListener((Change<? extends Account> change) -> {
+      if (change.wasAdded())
+        rows.add(change.getElementAdded());
+      else if (change.wasRemoved())
+        rows.remove(change.getElementRemoved());
+    });
+
+    accountTable.setItems(rows);
 
     // Change the globally focused object whenever user focuses
     // a new row in the table.

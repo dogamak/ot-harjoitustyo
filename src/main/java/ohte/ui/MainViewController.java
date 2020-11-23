@@ -23,7 +23,7 @@ import javafx.scene.Parent;
 import static javafx.collections.FXCollections.observableList;
 
 import ohte.domain.Application;
-import ohte.storage.Account;
+import ohte.domain.Account;
 import ohte.storage.StorageObjectFieldVisitor;
 
 /**
