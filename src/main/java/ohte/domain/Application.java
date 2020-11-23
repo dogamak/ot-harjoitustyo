@@ -170,4 +170,8 @@ public class Application {
 
     storage.saveAccount(normal);
   }
+
+  public void removeAccount(Account account) {
+    storage.removeAccount(account);
+  }
 }

@@ -83,5 +83,16 @@ implements Persister<Account>, SetChangeListener<Account>
     }
   }
 
-  private void deleteAccount(Account deleted) {}
+  private void deleteAccount(Account deleted) {
+    try {
+      PreparedStatement stmt = conn
+        .prepareStatement("DELETE FROM accounts WHERE username = ?");
+
+      stmt.setString(1, deleted.getUsername());
+
+      stmt.executeUpdate();
+    } catch (SQLException sqle) {
+      sqle.printStackTrace();
+    }
+  }
 }

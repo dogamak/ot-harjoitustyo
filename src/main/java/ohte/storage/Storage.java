@@ -27,6 +27,10 @@ public class Storage {
     accountSet.add(account);
   }
 
+  public void removeAccount(Account account) {
+    accountSet.remove(account);
+  }
+
   public Account getAccountByUsername(String username) {
     return accountSet
       .stream()

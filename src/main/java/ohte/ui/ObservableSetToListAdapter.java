@@ -45,9 +45,12 @@ public class ObservableSetToListAdapter<E> extends ModifiableObservableListBase<
       endChange();
     } else if (change.wasRemoved()) {
       for (int i = 0; i < list.size(); i++) {
-        if (list.get(i).equals(change.getElementRemoved())) {
+        E element = list.get(i);
+
+        if (element.equals(change.getElementRemoved())) {
           beginChange();
-          nextRemove(i, list.get(i));
+          list.remove(i);
+          nextRemove(i, element);
           endChange();
           break;
         }

@@ -46,7 +46,7 @@ public class AccountTabController {
    * Reference to the {@link TableView} for displaying a list of all {@link Account Accounts}.
    */
   @FXML
-  private TableView accountTable;
+  private TableView<Account> accountTable;
 
   /**
    * Sets up the UI after the child components have been initialized.
@@ -104,5 +104,16 @@ public class AccountTabController {
    * clicks the {@link Button} for removing an account.
    */
   @FXML
-  private void handleRemoveAccount(ActionEvent event) {}
+  private void handleRemoveAccount(ActionEvent event) {
+    Application app = Application.getSingleton();
+
+    accountTable
+      .getSelectionModel()
+      .getSelectedItems()
+      .stream()
+      .forEach(account -> {
+        System.out.println("Removing account!");
+        app.removeAccount(account);
+      });
+  }
 }
