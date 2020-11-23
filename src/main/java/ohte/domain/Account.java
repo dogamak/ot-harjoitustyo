@@ -124,4 +124,8 @@ public class Account {
   public String getUsername() {
     return username;
   }
+
+  public boolean equals(Account other) {
+    return username.equals(other.getUsername());
+  }
 }

@@ -70,16 +70,7 @@ public class AccountTabController {
       .getStorage()
       .getAccountsObservable();
 
-    ObservableList<Account> rows = observableList(accounts.stream().collect(Collectors.toList()));
-
-    accounts.addListener((Change<? extends Account> change) -> {
-      if (change.wasAdded())
-        rows.add(change.getElementAdded());
-      else if (change.wasRemoved())
-        rows.remove(change.getElementRemoved());
-    });
-
-    accountTable.setItems(rows);
+    accountTable.setItems(new ObservableSetToListAdapter(accounts));
 
     // Change the globally focused object whenever user focuses
     // a new row in the table.
