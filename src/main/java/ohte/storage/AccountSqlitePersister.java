@@ -12,15 +12,31 @@ import java.sql.ResultSet;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 
+/**
+ * Implementation for persisting account data in a SQLite database.
+ */
 public class AccountSqlitePersister
 implements Persister<Account>, SetChangeListener<Account>
 {
+  /**
+   * Handle to the SQLite database.
+   */
   Connection conn;
 
+  /**
+   * Open or create a SQLite database at the given path.
+   */
   public AccountSqlitePersister(String path) throws SQLException {
     conn = DriverManager.getConnection("jdbc:sqlite:" + path);
   }
 
+  /**
+   * Called by {@link Storage} when this persister is added.
+   *
+   * Performs neccessary database setup and imports intial
+   * account data from the database. Registers neccessary
+   * callbacks.
+   */
   public void synchronize(ObservableSet<Account> collection) {
     createTables();
 
@@ -33,6 +49,9 @@ implements Persister<Account>, SetChangeListener<Account>
     collection.addListener(this);
   }
 
+  /**
+   * Callback which is triggered whenever an account is deleted or created.
+   */
   public void onChanged(SetChangeListener.Change<? extends Account> change) {
     if (change.wasAdded()) {
       insertAccount(change.getElementAdded());
@@ -41,6 +60,9 @@ implements Persister<Account>, SetChangeListener<Account>
     }
   }
 
+  /**
+   * Creates the SQLite table holding the accounts' data.
+   */
   private void createTables() {
     try (Statement stmt = conn.createStatement()) {
       stmt.execute(
@@ -55,6 +77,9 @@ implements Persister<Account>, SetChangeListener<Account>
     }
   }
 
+  /**
+   * Imports all accounts from the database.
+   */
   private void loadInitialAccounts(ObservableSet<Account> collection) throws SQLException {
     ResultSet results = conn.createStatement()
       .executeQuery("SELECT * FROM accounts");
@@ -68,6 +93,9 @@ implements Persister<Account>, SetChangeListener<Account>
     }
   }
 
+  /**
+   * Saves a new account into the database.
+   */
   private void insertAccount(Account account) {
     try {
       PreparedStatement stmt = conn
@@ -83,6 +111,9 @@ implements Persister<Account>, SetChangeListener<Account>
     }
   }
 
+  /**
+   * Removes an account from the database permanently.
+   */
   private void deleteAccount(Account deleted) {
     try {
       PreparedStatement stmt = conn

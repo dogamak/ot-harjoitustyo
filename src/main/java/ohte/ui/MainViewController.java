@@ -107,9 +107,31 @@ public class MainViewController implements ChangeListener<Object> {
   @Override
   public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
     System.out.println(newValue);
-    ObjectFieldTableFactory factory = new ObjectFieldTableFactory();
-    factory.visit(newValue);
-    sidePane.getChildren().add(factory.getPane());
+
+    Parent paneContent = null;
+
+    if (newValue instanceof Account) {
+      paneContent = createAccountPane((Account) newValue);
+    }
+
+    if (paneContent != null) {
+      sidePane.getChildren().setAll(paneContent);
+    }
+  }
+
+  private Parent createAccountPane(Account account) {
+    Parent pane = null;
+
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ui/AccountPane.fxml"));
+
+      pane = loader.load();
+      ((AccountPaneController) loader.getController()).setAccount(account);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
+
+    return pane;
   }
 
   /**
