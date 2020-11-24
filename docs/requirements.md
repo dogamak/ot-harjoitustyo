@@ -31,13 +31,13 @@ ne ominaisuudet, jotka tulee minimissään toteuttaa, jotta sovelluksesta olisi
 hyötyä käyttäjälleen.  Loput ominaisuuksista ovat lisäarvoa tuottavia ominaisuuksia.
 
 ### Käyttäjähallinta
- - [ ] Käyttäjä voi luoda uuden inventaariotiedoston, joka toimii sovelluksen tietokantana. **(MVP)**
-   - Tiedoston luonnin yhteydessä luodaan pääkäyttäjä.
- - [ ] Käyttäjä voi avata jo olemassa olevan inventaariotiedoston. **(MVP)**
- - [ ] Käyttäjä voi kirjautua pääkäyttäjän tunnuksilla. **(MVP)**
+ - [ ] Käyttäjä voi luoda uuden inventaariotiedoston, joka toimii sovelluksen tietokantana. **(MVP) (DONE)**
+   - Tiedoston luonnin yhteydessä luodaan pääkäyttäjä. **(DONE)**
+ - [ ] Käyttäjä voi avata jo olemassa olevan inventaariotiedoston. **(MVP) (DONE)**
+ - [ ] Käyttäjä voi kirjautua pääkäyttäjän tunnuksilla. **(MVP) (DONE)**
 
 ### Laitteistokirjanpito
- - [ ] Käyttäjä voi lisätä kirjanpitoon uusia laitteita, joilla on seuraavia tietueita: (**MVP)**
+ - [ ] Käyttäjä voi lisätä kirjanpitoon uusia laitteita, joilla on seuraavia tietueita: **(MVP) (DONE)**
    - Valmistaja
    - Malli **(MVP)**
    - Käyttöönottoajankohta
@@ -47,7 +47,7 @@ hyötyä käyttäjälleen.  Loput ominaisuuksista ovat lisäarvoa tuottavia omin
    - IP-osoite
    - MAC-osoite
    - Vapaamuotoinen kuvaus
- - [ ] Käyttäjä voi poistaa kirjanpidosta laitteita. **(MVP)**
+ - [ ] Käyttäjä voi poistaa kirjanpidosta laitteita. **(MVP) (DONE)**
  - [ ] Käyttäjä voi muokata kirjanpidossa olevan laitteen tietoja. **(MVP)**
 
 ### Ohjelmistokirjanpito

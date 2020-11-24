@@ -12,6 +12,7 @@ mvn compile exec:java
 ## Dokumentaatio
 
  - [Vaatimusmäärittely](docs/requirements.md)
+ - [Arkkitehtuuri](docs/architecture.md)
 
 ## Työaikakirjanpito
 
