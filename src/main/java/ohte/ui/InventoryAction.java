@@ -12,35 +12,35 @@ import ohte.domain.Credentials;
  *  - {@link Type.OPEN}: Open an existing inventory file.
  */
 class InventoryAction {
-  /** Represents the type of an action. */
-  static enum Type {
-    CREATE,
-    OPEN;
-  }
+    /** Represents the type of an action. */
+    static enum Type {
+        CREATE,
+        OPEN;
+    }
 
-  /** Type of the action. */
-  Type type;
+    /** Type of the action. */
+    Type type;
 
-  /** File to be created or to be opened. */
-  File file;
+    /** File to be created or to be opened. */
+    File file;
 
-  InventoryAction(Type type, File file) {
-    this.type = type;
-    this.file = file;
-  }
+    InventoryAction(Type type, File file) {
+        this.type = type;
+        this.file = file;
+    }
 
-  /**
-   * Returns the type of action chosen by the user.
-   */
-  Type getType() {
-    return type;
-  }
+    /**
+     * Returns the type of action chosen by the user.
+     */
+    Type getType() {
+        return type;
+    }
 
-  /**
-   * Returns the file associated with the action.
-   * The file may or may not exist on the filesystem.
-   */
-  File getFile() {
-    return file;
-  }
+    /**
+     * Returns the file associated with the action.
+     * The file may or may not exist on the filesystem.
+     */
+    File getFile() {
+        return file;
+    }
 }

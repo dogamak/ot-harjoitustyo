@@ -18,47 +18,51 @@ import java.sql.SQLException;
  * when creating a new storage.
  */
 public class Storage {
-  ObservableSet<Account> accountSet = FXCollections.observableSet();
-  ObservableSet<Asset> assetSet = FXCollections.observableSet();
+    ObservableSet<Account> accountSet = FXCollections.observableSet();
+    ObservableSet<Asset> assetSet = FXCollections.observableSet();
 
-  public void synchronize(Persister<Account> persister) {
-    persister.synchronize(accountSet);
-  }
+    public void synchronize(Persister<Account> persister) {
+        persister.synchronize(accountSet);
+    }
 
-  public void saveAccount(Account account) {
-    accountSet.add(account);
-  }
+    public void saveAccount(Account account) {
+        accountSet.add(account);
+    }
 
-  public void removeAccount(Account account) {
-    accountSet.remove(account);
-  }
+    public void removeAccount(Account account) {
+        accountSet.remove(account);
+    }
 
-  public Account getAccountByUsername(String username) {
-    return accountSet
-      .stream()
-      .filter(account -> account.getUsername().equals(username))
-      .findAny()
-      .orElse(null);
-  }
+    public Account getAccountByUsername(String username) {
+        return accountSet
+            .stream()
+            .filter(account -> account.getUsername().equals(username))
+            .findAny()
+            .orElse(null);
+    }
 
-  public List<Account> getAccounts() {
-    return accountSet.stream().collect(Collectors.toList());
-  }
+    public List<Account> getAccounts() {
+        return accountSet.stream().collect(Collectors.toList());
+    }
 
-  public ObservableSet<Account> getAccountsObservable() {
-    return accountSet;
-  }
+    public ObservableSet<Account> getAccountsObservable() {
+        return accountSet;
+    }
 
-  public void saveAsset(Asset asset) {
-    assetSet.add(asset);
-  }
+    public void saveAsset(Asset asset) {
+        assetSet.add(asset);
+    }
 
-  public List<Asset> getAssets() {
-    return assetSet.stream().collect(Collectors.toList());
-  }
+    public List<Asset> getAssets() {
+        return assetSet.stream().collect(Collectors.toList());
+    }
 
-  public interface Type<T, Self> {
-    T convertTo();
-    Self convertFrom(T value);
-  }
+    public ObservableSet<Asset> getAssetsObservable() {
+        return assetSet;
+    }
+
+    public interface Type<T, Self> {
+        T convertTo();
+        Self convertFrom(T value);
+    }
 }

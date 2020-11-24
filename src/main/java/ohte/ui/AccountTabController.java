@@ -30,90 +30,90 @@ import ohte.domain.Account;
  * Controller for the Accounts tab.
  */
 public class AccountTabController {
-  /**
-   * Reference to the {@link Button} for creating a new account.
-   */
-  @FXML
-  private Button createAccountButton;
+    /**
+     * Reference to the {@link Button} for creating a new account.
+     */
+    @FXML
+    private Button createAccountButton;
 
-  /**
-   * Reference to the {@link Button} for removing an account.
-   */
-  @FXML
-  private Button removeAccountButton;
+    /**
+     * Reference to the {@link Button} for removing an account.
+     */
+    @FXML
+    private Button removeAccountButton;
 
-  /**
-   * Reference to the {@link TableView} for displaying a list of all {@link Account Accounts}.
-   */
-  @FXML
-  private TableView<Account> accountTable;
+    /**
+     * Reference to the {@link TableView} for displaying a list of all {@link Account Accounts}.
+     */
+    @FXML
+    private TableView<Account> accountTable;
 
-  /**
-   * Sets up the UI after the child components have been initialized.
-   * 
-   * Called automatically by {@link FXMLLoader}.
-   */
-  @FXML
-  private void initialize() {
-    createAccountButton.setGraphic(FontIcon.of(FontAwesome.USER_PLUS));
-    removeAccountButton.setGraphic(FontIcon.of(FontAwesomeSolid.USER_MINUS));
+    /**
+     * Sets up the UI after the child components have been initialized.
+     * 
+     * Called automatically by {@link FXMLLoader}.
+     */
+    @FXML
+    private void initialize() {
+        createAccountButton.setGraphic(FontIcon.of(FontAwesome.USER_PLUS));
+        removeAccountButton.setGraphic(FontIcon.of(FontAwesomeSolid.USER_MINUS));
 
-    TableColumn<Account, String> usernameColumn = new TableColumn("Username");
-    usernameColumn.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getUsername()));
+        TableColumn<Account, String> usernameColumn = new TableColumn("Username");
+        usernameColumn.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getUsername()));
 
-    TableColumn<Account, String> roleColumn = new TableColumn("Role");
-    roleColumn.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getRole().toString()));
+        TableColumn<Account, String> roleColumn = new TableColumn("Role");
+        roleColumn.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getRole().toString()));
 
-    accountTable.getColumns().addAll(usernameColumn, roleColumn);
+        accountTable.getColumns().addAll(usernameColumn, roleColumn);
 
-    ObservableSet<Account> accounts = Application.getSingleton()
-      .getStorage()
-      .getAccountsObservable();
+        ObservableSet<Account> accounts = Application.getSingleton()
+            .getStorage()
+            .getAccountsObservable();
 
-    accountTable.setItems(new ObservableSetToListAdapter(accounts));
+        accountTable.setItems(new ObservableSetToListAdapter(accounts));
 
-    // Change the globally focused object whenever user focuses
-    // a new row in the table.
-    accountTable
-      .getSelectionModel()
-      .selectedItemProperty()
-      .addListener((prop, oldValue, newValue) ->
-        Application.getSingleton().getFocused().set(newValue));
-  }
+        // Change the globally focused object whenever user focuses
+        // a new row in the table.
+        accountTable
+            .getSelectionModel()
+            .selectedItemProperty()
+            .addListener((prop, oldValue, newValue) ->
+                    Application.getSingleton().getFocused().set(newValue));
+    }
 
-  /**
-   * Event handler which is called from the FXML whenever the user
-   * clicks the {@link Button} for creating a new account.
-   */
-  @FXML
-  private void handleCreateAccount(ActionEvent event) {
-    CredentialsDialog dialog = new CredentialsDialog("Create normal account");
+    /**
+     * Event handler which is called from the FXML whenever the user
+     * clicks the {@link Button} for creating a new account.
+     */
+    @FXML
+    private void handleCreateAccount(ActionEvent event) {
+        CredentialsDialog dialog = new CredentialsDialog("Create normal account");
 
-    Label message = new Label("Input credentials for a new account:");
-    dialog.getMessagePane().getChildren().add(message);
+        Label message = new Label("Input credentials for a new account:");
+        dialog.getMessagePane().getChildren().add(message);
 
-    Credentials credentials = dialog.showAndWait()
-      .map(r -> r.getCredentials())
-      .orElse(null);
+        Credentials credentials = dialog.showAndWait()
+            .map(r -> r.getCredentials())
+            .orElse(null);
 
-    Application.getSingleton().createAccount(credentials);
-  }
+        Application.getSingleton().createAccount(credentials);
+    }
 
-  /**
-   * Event handler which is called from the FXML whenever the user
-   * clicks the {@link Button} for removing an account.
-   */
-  @FXML
-  private void handleRemoveAccount(ActionEvent event) {
-    Application app = Application.getSingleton();
+    /**
+     * Event handler which is called from the FXML whenever the user
+     * clicks the {@link Button} for removing an account.
+     */
+    @FXML
+    private void handleRemoveAccount(ActionEvent event) {
+        Application app = Application.getSingleton();
 
-    accountTable
-      .getSelectionModel()
-      .getSelectedItems()
-      .stream()
-      .forEach(account -> {
-        System.out.println("Removing account!");
-        app.removeAccount(account);
-      });
-  }
+        accountTable
+            .getSelectionModel()
+            .getSelectedItems()
+            .stream()
+            .forEach(account -> {
+                System.out.println("Removing account!");
+                app.removeAccount(account);
+            });
+    }
 }

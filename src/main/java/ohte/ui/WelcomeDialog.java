@@ -21,62 +21,62 @@ import ohte.domain.Credentials;
  * Prompts the user to choose between creating a new inventory and opening an existing one.
  */
 public class WelcomeDialog extends Dialog<InventoryAction> {
-  /**
-   * Button displaying "Create Inventory File".
-   *
-   * This static value can be compared against the ButtonType
-   * object returned by the Dialog to determine the user's choiche.
-   */
-  private static ButtonType CREATE_BUTTON = new ButtonType("Create Inventory File");
+    /**
+     * Button displaying "Create Inventory File".
+     *
+     * This static value can be compared against the ButtonType
+     * object returned by the Dialog to determine the user's choiche.
+     */
+    private static ButtonType createButton = new ButtonType("Create Inventory File");
 
-  /**
-   * Button dsplaying "Open Inventory File".
-   *
-   * This static value can be compared against the ButtonType
-   * object returned by the Dialog to determine the user's choiche.
-   */
-  private static ButtonType OPEN_BUTTON = new ButtonType("Open Inventory File");
+    /**
+     * Button dsplaying "Open Inventory File".
+     *
+     * This static value can be compared against the ButtonType
+     * object returned by the Dialog to determine the user's choiche.
+     */
+    private static ButtonType openButton = new ButtonType("Open Inventory File");
 
-  public WelcomeDialog() {
-    DialogPane pane = getDialogPane();
+    public WelcomeDialog() {
+        DialogPane pane = getDialogPane();
 
-    TextFlow textFlow = new TextFlow();
+        TextFlow textFlow = new TextFlow();
 
-    Text header = new Text("Welcome to IT Asset Manager!");
-    header.setStyle("-fx-font-weight: bold");
+        Text header = new Text("Welcome to IT Asset Manager!");
+        header.setStyle("-fx-font-weight: bold");
 
-    Text body = new Text("\nClick below to create a new empty inventory file or to open an existing one.");
-    textFlow.getChildren().addAll(header, body);
-    pane.setContent(textFlow);
+        Text body = new Text("\nClick below to create a new empty inventory file or to open an existing one.");
+        textFlow.getChildren().addAll(header, body);
+        pane.setContent(textFlow);
 
-    setResultConverter(button -> convertResult(this, button));
+        setResultConverter(button -> convertResult(this, button));
 
-    pane.getButtonTypes().addAll(CREATE_BUTTON, OPEN_BUTTON);
+        pane.getButtonTypes().addAll(createButton, openButton);
 
-  }
-
-  /**
-   * Returns the dialog's result value based on the {@link ButtonType} clicked by the user.
-   *
-   * @param dialog - Reference to the WelcomeDialog instance.
-   *    Needed for having access to the current Window for displaying a file chooser.
-   * @param buttonType - ButtonType chosen by the user.
-   */
-  static InventoryAction convertResult(WelcomeDialog dialog, ButtonType buttonType) {
-    FileChooser chooser = new FileChooser();
-    Window window = dialog.getDialogPane().getScene().getWindow();
-
-    File file = null;
-    InventoryAction.Type type = null;
-
-    if (buttonType == CREATE_BUTTON) {
-      file = chooser.showSaveDialog(window);
-      type = InventoryAction.Type.CREATE;
-    } else if (buttonType == OPEN_BUTTON) {
-      file = chooser.showOpenDialog(window);
-      type = InventoryAction.Type.OPEN;
     }
 
-    return new InventoryAction(type, file);
-  }
+    /**
+     * Returns the dialog's result value based on the {@link ButtonType} clicked by the user.
+     *
+     * @param dialog - Reference to the WelcomeDialog instance.
+     *    Needed for having access to the current Window for displaying a file chooser.
+     * @param buttonType - ButtonType chosen by the user.
+     */
+    static InventoryAction convertResult(WelcomeDialog dialog, ButtonType buttonType) {
+        FileChooser chooser = new FileChooser();
+        Window window = dialog.getDialogPane().getScene().getWindow();
+
+        File file = null;
+        InventoryAction.Type type = null;
+
+        if (buttonType == CREATE_BUTTON) {
+            file = chooser.showSaveDialog(window);
+            type = InventoryAction.Type.CREATE;
+        } else if (buttonType == OPEN_BUTTON) {
+            file = chooser.showOpenDialog(window);
+            type = InventoryAction.Type.OPEN;
+        }
+
+        return new InventoryAction(type, file);
+    }
 }
