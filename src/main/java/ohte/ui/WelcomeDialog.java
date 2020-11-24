@@ -69,10 +69,10 @@ public class WelcomeDialog extends Dialog<InventoryAction> {
         File file = null;
         InventoryAction.Type type = null;
 
-        if (buttonType == CREATE_BUTTON) {
+        if (buttonType == createButton) {
             file = chooser.showSaveDialog(window);
             type = InventoryAction.Type.CREATE;
-        } else if (buttonType == OPEN_BUTTON) {
+        } else if (buttonType == openButton) {
             file = chooser.showOpenDialog(window);
             type = InventoryAction.Type.OPEN;
         }
