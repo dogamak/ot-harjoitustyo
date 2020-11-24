@@ -1,6 +1,7 @@
 package ohte.storage;
 
 import ohte.domain.Account;
+import ohte.domain.Asset;
 import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
  */
 public class Storage {
   ObservableSet<Account> accountSet = FXCollections.observableSet();
+  ObservableSet<Asset> assetSet = FXCollections.observableSet();
 
   public void synchronize(Persister<Account> persister) {
     persister.synchronize(accountSet);
@@ -45,6 +47,14 @@ public class Storage {
 
   public ObservableSet<Account> getAccountsObservable() {
     return accountSet;
+  }
+
+  public void saveAsset(Asset asset) {
+    assetSet.add(asset);
+  }
+
+  public List<Asset> getAssets() {
+    return assetSet.stream().collect(Collectors.toList());
   }
 
   public interface Type<T, Self> {
