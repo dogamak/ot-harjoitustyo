@@ -66,6 +66,7 @@ public class MainViewController implements ChangeListener<Object> {
   private void initialize() {
     updateAccountLabel();
     addTabView("Accounts", "ui/AccountTab.fxml");
+    addTabView("Assets", "ui/AssetTab.fxml");
 
     Application.getSingleton().getFocused().addListener(this);
   }
