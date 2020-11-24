@@ -30,6 +30,10 @@ implements Persister<Account>, SetChangeListener<Account>
     conn = DriverManager.getConnection("jdbc:sqlite:" + path);
   }
 
+  public Connection getConnection() {
+    return conn;
+  }
+
   /**
    * Called by {@link Storage} when this persister is added.
    *
