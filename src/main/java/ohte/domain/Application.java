@@ -3,12 +3,14 @@ package ohte.domain;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.Connection;
+import java.util.function.Function;
 
 import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleObjectProperty;
 
 import ohte.domain.Account;
 import ohte.storage.Storage;
+import ohte.storage.Persister;
 import ohte.storage.AccountSqlitePersister;
 import ohte.storage.AssetSqlitePersister;
 
@@ -41,7 +43,12 @@ public class Application {
      *
      * @see #getFocused
      */
-    SimpleObjectProperty<Object> focusedObject = new SimpleObjectProperty(null);
+    SimpleObjectProperty<Object> focusedObject = new SimpleObjectProperty<>(null);
+
+    Function<String, Persister<Account>> accountPersisterFactory = this::createAccountPersister;
+    Function<String, Persister<Asset>> assetPersisterFactory = this::createAssetPersister;
+
+    Connection conn;
 
     /**
      * Returns the global instance of {@link Application}.
@@ -113,6 +120,10 @@ public class Application {
      */
     public Application() {}
 
+    Application(Storage storage) {
+      this.storage = storage;
+    }
+
     private void synchronizeToFile(String path) {
         try {
             Connection conn = DriverManager.getConnection("jdbc:sqlite:" + path);
@@ -166,6 +177,35 @@ public class Application {
         }
 
         return result;
+    }
+
+    private Connection getConnection(String path) {
+      if (conn == null) {
+        try {
+          conn = DriverManager.getConnection("jdbc:sqlite:" + path);
+        } catch (SQLException sqle) {
+          sqle.printStackTrace();
+          return null;
+        }
+      }
+
+      return conn;
+    }
+
+    private AssetSqlitePersister createAssetPersister(String path) {
+      return new AssetSqlitePersister(getConnection(path));
+    }
+
+    private AccountSqlitePersister createAccountPersister(String path) {
+      return new AccountSqlitePersister(getConnection(path));
+    }
+
+    void setAssetPersisterFactory(Function<String, Persister<Asset>> factory) {
+      assetPersisterFactory = factory;
+    }
+
+    void setAccountPersisterFactory(Function<String, Persister<Account>> factory) {
+      accountPersisterFactory = factory;
     }
 
     public void createAccount(Credentials credentials) {
