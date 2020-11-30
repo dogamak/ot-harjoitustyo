@@ -3,6 +3,8 @@ package ohte.storage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
@@ -18,7 +20,8 @@ public class AccountSqlitePersisterTest {
 
   @Before
   public void initializePersister() throws SQLException {
-    persister = new AccountSqlitePersister(":memory:");
+    Connection conn = DriverManager.getConnection("jdbc:sqlite::memory:");
+    persister = new AccountSqlitePersister(conn);
     set = FXCollections.observableSet();
     persister.synchronize(set);
   }
@@ -63,19 +66,23 @@ public class AccountSqlitePersisterTest {
   @Test
   public void existingAccountsAreLoadedFromTheDatabase() throws IOException, SQLException {
     File tmpFile = File.createTempFile("test", "sqlite");
+    String connectionString = "jdbc:sqlite:" + tmpFile.getAbsolutePath();
 
-    persister = new AccountSqlitePersister(tmpFile.getAbsolutePath());
-    set = FXCollections.observableSet();
-    persister.synchronize(set);
+    try (Connection conn = DriverManager.getConnection(connectionString)) {
+      persister = new AccountSqlitePersister(conn);
+      set = FXCollections.observableSet();
+      persister.synchronize(set);
 
-    Account account = new Account("username");
-    account.setPassword("asd");
-    set.add(account);
+      Account account = new Account("username");
+      account.setPassword("asd");
+      set.add(account);
+    }
 
-    persister = new AccountSqlitePersister(tmpFile.getAbsolutePath());
-    ObservableSet<Account> newSet = FXCollections.observableSet();
-    persister.synchronize(newSet);
-
-    assertEquals(1, newSet.size());
+    try (Connection conn = DriverManager.getConnection(connectionString)) {
+      persister = new AccountSqlitePersister(conn);
+      ObservableSet<Account> newSet = FXCollections.observableSet();
+      persister.synchronize(newSet);
+      assertEquals(1, newSet.size());
+    }
   }
 }

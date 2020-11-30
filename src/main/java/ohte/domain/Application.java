@@ -1,6 +1,8 @@
 package ohte.domain;
 
 import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.sql.Connection;
 
 import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleObjectProperty;
@@ -8,6 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import ohte.domain.Account;
 import ohte.storage.Storage;
 import ohte.storage.AccountSqlitePersister;
+import ohte.storage.AssetSqlitePersister;
 
 /**
  * Class containing the application state and core bussines logic.
@@ -112,7 +115,9 @@ public class Application {
 
     private void synchronizeToFile(String path) {
         try {
-            storage.synchronize(new AccountSqlitePersister(path));
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + path);
+            storage.synchronizeAccounts(new AccountSqlitePersister(conn));
+            storage.synchronizeAssets(new AssetSqlitePersister(conn));
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }

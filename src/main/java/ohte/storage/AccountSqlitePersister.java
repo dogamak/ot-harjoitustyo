@@ -3,30 +3,21 @@ package ohte.storage;
 import ohte.domain.Account;
 
 import java.sql.SQLException;
-import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
 
 /**
  * Implementation for persisting account data in a SQLite database.
  */
-public class AccountSqlitePersister
-    implements Persister<Account>, SetChangeListener<Account> {
-    /**
-     * Handle to the SQLite database.
-     */
-    Connection conn;
-
-    /**
-     * Open or create a SQLite database at the given path.
-     */
-    public AccountSqlitePersister(String path) throws SQLException {
-        conn = DriverManager.getConnection("jdbc:sqlite:" + path);
+public class AccountSqlitePersister extends SqlitePersister<Account> {
+    public AccountSqlitePersister(Connection conn) {
+      super(conn);
     }
 
     public Connection getConnection() {
@@ -34,39 +25,10 @@ public class AccountSqlitePersister
     }
 
     /**
-     * Called by {@link Storage} when this persister is added.
-     *
-     * Performs neccessary database setup and imports intial
-     * account data from the database. Registers neccessary
-     * callbacks.
-     */
-    public void synchronize(ObservableSet<Account> collection) {
-        createTables();
-
-        try {
-            loadInitialAccounts(collection);
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-        }
-
-        collection.addListener(this);
-    }
-
-    /**
-     * Callback which is triggered whenever an account is deleted or created.
-     */
-    public void onChanged(SetChangeListener.Change<? extends Account> change) {
-        if (change.wasAdded()) {
-            insertAccount(change.getElementAdded());
-        } else if (change.wasRemoved()) {
-            deleteAccount(change.getElementRemoved());
-        }
-    }
-
-    /**
      * Creates the SQLite table holding the accounts' data.
      */
-    private void createTables() {
+    @Override
+    void createTables() throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(
                 "CREATE TABLE IF NOT EXISTS accounts (" +
@@ -75,15 +37,16 @@ public class AccountSqlitePersister
                 "password TEXT NOT NULL" +
                 ")"
             );
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
         }
     }
 
     /**
      * Imports all accounts from the database.
      */
-    private void loadInitialAccounts(ObservableSet<Account> collection) throws SQLException {
+    @Override
+    List<Account> loadInitialEntries() throws SQLException {
+        ArrayList<Account> accounts = new ArrayList<>();
+
         ResultSet results = conn.createStatement()
             .executeQuery("SELECT * FROM accounts");
 
@@ -92,41 +55,40 @@ public class AccountSqlitePersister
             account.setRole(Account.Role.fromString(results.getString("role")));
             account.setPasswordHash(results.getString("password"));
 
-            collection.add(account);
+            accounts.add(account);
         }
+
+        return accounts;
     }
+
+    @Override
+    void registerEntryListeners(Account entry) {}
 
     /**
      * Saves a new account into the database.
      */
-    private void insertAccount(Account account) {
-        try {
-            PreparedStatement stmt = conn
-                .prepareStatement("INSERT INTO accounts (username, role, password) VALUES (?,?,?)");
+    @Override
+    void insertEntry(Account account) throws SQLException {
+        PreparedStatement stmt = conn
+            .prepareStatement("INSERT INTO accounts (username, role, password) VALUES (?,?,?)");
 
-            stmt.setString(1, account.getUsername());
-            stmt.setString(2, account.getRole().toString());
-            stmt.setString(3, account.getPasswordHash());
+        stmt.setString(1, account.getUsername());
+        stmt.setString(2, account.getRole().toString());
+        stmt.setString(3, account.getPasswordHash());
 
-            stmt.executeUpdate();
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-        }
+        stmt.executeUpdate();
     }
 
     /**
      * Removes an account from the database permanently.
      */
-    private void deleteAccount(Account deleted) {
-        try {
-            PreparedStatement stmt = conn
-                .prepareStatement("DELETE FROM accounts WHERE username = ?");
+    @Override
+    void deleteEntry(Account deleted) throws SQLException {
+        PreparedStatement stmt = conn
+            .prepareStatement("DELETE FROM accounts WHERE username = ?");
 
-            stmt.setString(1, deleted.getUsername());
+        stmt.setString(1, deleted.getUsername());
 
-            stmt.executeUpdate();
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
-        }
+        stmt.executeUpdate();
     }
 }

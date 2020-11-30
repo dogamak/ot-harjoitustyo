@@ -21,8 +21,12 @@ public class Storage {
     ObservableSet<Account> accountSet = FXCollections.observableSet();
     ObservableSet<Asset> assetSet = FXCollections.observableSet();
 
-    public void synchronize(Persister<Account> persister) {
+    public void synchronizeAccounts(Persister<Account> persister) {
         persister.synchronize(accountSet);
+    }
+
+    public void synchronizeAssets(Persister<Asset> persister) {
+        persister.synchronize(assetSet);
     }
 
     public void saveAccount(Account account) {

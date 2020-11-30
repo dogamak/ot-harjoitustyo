@@ -19,6 +19,16 @@ public class Asset {
     ObjectProperty<String> model = new SimpleObjectProperty<>("");
     ObjectProperty<String> serialNumber = new SimpleObjectProperty<>("");
 
+    int id;
+
+    public void setId(int id) {
+      this.id = id;
+    }
+
+    public int getId() {
+      return this.id;
+    }
+
     public List<String> getIpAddresses() {
         return ipAddresses.get();
     }
@@ -73,5 +83,9 @@ public class Asset {
 
     public Property<String> getSerialNumberProperty() {
         return serialNumber;
+    }
+
+    public boolean equals(Asset other) {
+      return getId() == other.getId();
     }
 }
