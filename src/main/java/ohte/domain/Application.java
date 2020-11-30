@@ -178,4 +178,8 @@ public class Application {
     public void createAsset() {
         storage.saveAsset(new Asset());
     }
+
+    public void removeAsset(Asset asset) {
+      storage.removeAsset(asset);
+    }
 }

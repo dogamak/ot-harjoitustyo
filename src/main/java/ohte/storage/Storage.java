@@ -61,6 +61,10 @@ public class Storage {
         return assetSet;
     }
 
+    public void removeAsset(Asset asset) {
+      assetSet.remove(asset);
+    }
+
     public interface Type<T, Self> {
         T convertTo();
         Self convertFrom(T value);

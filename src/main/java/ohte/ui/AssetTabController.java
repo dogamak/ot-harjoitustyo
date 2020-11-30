@@ -19,7 +19,7 @@ import ohte.domain.Application;
 
 public class AssetTabController {
     @FXML
-    private TableView assetTable;
+    private TableView<Asset> assetTable;
 
     @FXML
     private Button createAssetButton;
@@ -33,10 +33,10 @@ public class AssetTabController {
         createAssetButton.setGraphic(FontIcon.of(FontAwesome.PLUS));
         removeAssetButton.setGraphic(FontIcon.of(FontAwesome.MINUS));
 
-        TableColumn<Asset, String> hostnameColumn = new TableColumn("Hostname");
+        TableColumn<Asset, String> hostnameColumn = new TableColumn<>("Hostname");
         hostnameColumn.setCellValueFactory(data -> data.getValue().getHostnameProperty());
 
-        TableColumn<Asset, String> ipAddressColumn = new TableColumn("IP Address");
+        TableColumn<Asset, String> ipAddressColumn = new TableColumn<>("IP Address");
         ipAddressColumn.setCellValueFactory(data -> {
             String joined = data.getValue().getIpAddresses()
                 .stream()
@@ -47,13 +47,13 @@ public class AssetTabController {
             return new ReadOnlyStringWrapper(joined);
         });
 
-        TableColumn<Asset, String> manufacturerColumn = new TableColumn("Manufacturer");
+        TableColumn<Asset, String> manufacturerColumn = new TableColumn<>("Manufacturer");
         manufacturerColumn.setCellValueFactory(data -> data.getValue().getManufacturerProperty());
 
-        TableColumn<Asset, String> modelColumn = new TableColumn("Model");
+        TableColumn<Asset, String> modelColumn = new TableColumn<>("Model");
         modelColumn.setCellValueFactory(data -> data.getValue().getModelProperty());
 
-        TableColumn<Asset, String> serialNumberColumn = new TableColumn("Serial Number");
+        TableColumn<Asset, String> serialNumberColumn = new TableColumn<>("Serial Number");
         serialNumberColumn.setCellValueFactory(data -> data.getValue().getSerialNumberProperty());
 
         assetTable.getColumns()
@@ -71,7 +71,7 @@ public class AssetTabController {
             .getStorage()
             .getAssetsObservable();
 
-        assetTable.setItems(new ObservableSetToListAdapter(assets));
+        assetTable.setItems(new ObservableSetToListAdapter<>(assets));
 
         assetTable
             .getSelectionModel()
@@ -86,5 +86,14 @@ public class AssetTabController {
     }
 
     @FXML
-    private void handleRemoveAsset(ActionEvent event) {}
+    private void handleRemoveAsset(ActionEvent event) {
+      Asset selected = assetTable
+        .getSelectionModel()
+        .selectedItemProperty()
+        .get();
+
+      Application
+        .getSingleton()
+        .removeAsset(selected);
+    }
 }
