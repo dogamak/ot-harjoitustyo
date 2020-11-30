@@ -24,6 +24,7 @@ import static javafx.collections.FXCollections.observableList;
 
 import ohte.domain.Application;
 import ohte.domain.Account;
+import ohte.domain.Asset;
 
 /**
  * Controller for managing the main UI.
@@ -83,6 +84,10 @@ public class MainViewController implements ChangeListener<Object> {
 
         if (newValue instanceof Account) {
             paneContent = createAccountPane((Account) newValue);
+        }
+
+        if (newValue instanceof Asset) {
+            paneContent = new AssetPane((Asset) newValue);
         }
 
         if (paneContent != null) {
