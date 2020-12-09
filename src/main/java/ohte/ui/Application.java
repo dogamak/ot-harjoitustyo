@@ -35,18 +35,28 @@ public class Application extends javafx.application.Application {
      * and {@link InventoryDialog}.
      */
     private void startupFlow() {
-        WelcomeDialog dialog = new WelcomeDialog();
+        InventoryAction result;
 
-        InventoryAction result = dialog.showAndWait().orElse(null);
+        do {
+            WelcomeDialog dialog = new WelcomeDialog();
 
-        if (result == null) {
-            return;
-        }
+            result = dialog.showAndWait().orElse(null);
+
+            if (result == null) {
+                return;
+            }
+        } while (result.getFile() == null);
+
+        boolean operationCompleted = false;
 
         if (result.getType() == InventoryAction.Type.CREATE) {
-            createInventoryFile(result.getFile());
+            operationCompleted = createInventoryFile(result.getFile());
         } else if (result.getType() == InventoryAction.Type.OPEN) {
-            openInventoryFile(result.getFile());
+            operationCompleted = openInventoryFile(result.getFile());
+        }
+
+        if (operationCompleted) {
+            startupFlow();
         }
     }
 
@@ -67,31 +77,40 @@ public class Application extends javafx.application.Application {
         return dialog;
     }
 
-    private void openInventoryFile(File file) {
+    private boolean openInventoryFile(File file) {
         boolean success;
         boolean first = true;
 
         do {
             Credentials credentials = createUnlockCredentialsDialog(!first)
                 .showAndWait()
+                .filter(r -> !r.wasCanceled())
                 .map(r -> r.getCredentials())
                 .orElse(null);
+
+            if (credentials == null) {
+                return false;
+            }
+
+            System.out.println(credentials.wasCanceled());
 
             success = ohte.domain.Application.getSingleton()
                 .openInventory(file.getAbsolutePath(), credentials);
 
             first = false;
         } while (!success);
+
+        return true;
     }
 
-    private void createInventoryFile(File file) {
+    private boolean createInventoryFile(File file) {
         CredentialsDialog invDialog = new CredentialsDialog("Create superuser");
 
         Label message = new Label(String.format(
-                    "Creating new inventory file %s.\nPlease give credentials " +
-                    "for creating a superuser account:",
-                    file.getName()
-                    ));
+            "Creating new inventory file %s.\nPlease give credentials " +
+            "for creating a superuser account:",
+            file.getName()
+        ));
 
         message.setWrapText(true);
 
@@ -101,11 +120,18 @@ public class Application extends javafx.application.Application {
             .add(message);
 
         Credentials credentials = invDialog.showAndWait()
+            .filter(result -> !result.wasCanceled())
             .map(result -> result.getCredentials())
             .orElse(null);
 
+        if (credentials == null) {
+            return false;
+        }
+
         ohte.domain.Application.getSingleton()
             .createInventory(file.getAbsolutePath(), credentials);
+
+        return true;
     }
 
     /**
