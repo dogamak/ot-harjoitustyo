@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
+import javafx.stage.FileChooser;
 
 import ohte.domain.Credentials;
 
@@ -18,10 +19,30 @@ import ohte.domain.Credentials;
  * Manages the startup UI flow and launches the main UI.
  */
 public class Application extends javafx.application.Application {
+    private File file;
+    private Credentials credentials;
+    private ohte.domain.Application app = ohte.domain.Application.getSingleton();
+    private InventoryAction startupAction;
+    private int authTryCount = 0;
+    private Stage stage;
+
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
         startupFlow();
-        showMainView(stage);
+        showMainView();
+    }
+
+    public void setStartupAction(InventoryAction action) {
+        startupAction = action;
+    }
+
+    public void setInventoryFile(File pfile) {
+        file = pfile;
+    }
+
+    public void setCredentials(Credentials pcreds) {
+        credentials = pcreds;
     }
 
     public static void main(String[] args) {
@@ -37,27 +58,78 @@ public class Application extends javafx.application.Application {
     private void startupFlow() {
         InventoryAction result;
 
-        do {
-            WelcomeDialog dialog = new WelcomeDialog();
-
-            result = dialog.showAndWait().orElse(null);
-
-            if (result == null) {
-                return;
+        while (true) {
+            if (startupAction == null) {
+                startupAction = new WelcomeDialog()
+                    .showAndWait()
+                    .orElse(null);
             }
-        } while (result.getFile() == null);
 
-        boolean operationCompleted = false;
+            if (file == null) {
+                showFileChooser();
+            }
 
-        if (result.getType() == InventoryAction.Type.CREATE) {
-            operationCompleted = createInventoryFile(result.getFile());
-        } else if (result.getType() == InventoryAction.Type.OPEN) {
-            operationCompleted = openInventoryFile(result.getFile());
+            if (credentials == null) {
+                authenticate();
+            }
+
+            if (startupAction == null || file == null || credentials == null) {
+                startupAction = null;
+                file = null;
+                credentials = null;
+            } else {
+                break;
+            }
+        }
+    }
+
+    private boolean authenticate() {
+        promptForCredentials();
+
+        if (credentials == null) {
+            return false;
         }
 
-        if (operationCompleted) {
-            startupFlow();
+        boolean success = false;
+
+        if (startupAction == InventoryAction.CREATE) {
+            app.createInventory(file.getAbsolutePath(), credentials);
+            return true;
+        } else if (startupAction == InventoryAction.OPEN) {
+            return app.openInventory(file.getAbsolutePath(), credentials);
         }
+
+        return false;
+    }
+
+    private void showFileChooser() {
+        FileChooser chooser = new FileChooser();
+
+        if (startupAction == InventoryAction.CREATE) {
+            file = chooser.showSaveDialog(stage);
+        } else if (startupAction == InventoryAction.OPEN) {
+            file = chooser.showOpenDialog(stage);
+        }
+    }
+
+    private void promptForCredentials() {
+        CredentialsDialog dialog;
+
+        boolean isRetry = authTryCount > 0;
+        authTryCount++;
+
+        if (startupAction == InventoryAction.OPEN) {
+            dialog = createUnlockCredentialsDialog(isRetry);
+        } else if (startupAction == InventoryAction.CREATE) {
+            dialog = createAccountCreationDialog();
+        } else {
+            return;
+        }
+
+        credentials = dialog.showAndWait()
+            .filter(r -> !r.wasCanceled())
+            .map(r -> r.getCredentials())
+            .orElse(null);
     }
 
     private CredentialsDialog createUnlockCredentialsDialog(boolean retry) {
@@ -77,6 +149,25 @@ public class Application extends javafx.application.Application {
         return dialog;
     }
 
+    private CredentialsDialog createAccountCreationDialog() {
+        CredentialsDialog dialog = new CredentialsDialog("Create superuser");
+
+        Label message = new Label(String.format(
+            "Creating new inventory file %s.\nPlease give credentials " +
+            "for creating a superuser account:",
+            file.getName()
+        ));
+
+        message.setWrapText(true);
+
+        dialog
+            .getMessagePane()
+            .getChildren()
+            .add(message);
+
+        return dialog;
+    }
+
     private boolean openInventoryFile(File file) {
         boolean success;
         boolean first = true;
@@ -92,8 +183,6 @@ public class Application extends javafx.application.Application {
                 return false;
             }
 
-            System.out.println(credentials.wasCanceled());
-
             success = ohte.domain.Application.getSingleton()
                 .openInventory(file.getAbsolutePath(), credentials);
 
@@ -103,41 +192,10 @@ public class Application extends javafx.application.Application {
         return true;
     }
 
-    private boolean createInventoryFile(File file) {
-        CredentialsDialog invDialog = new CredentialsDialog("Create superuser");
-
-        Label message = new Label(String.format(
-            "Creating new inventory file %s.\nPlease give credentials " +
-            "for creating a superuser account:",
-            file.getName()
-        ));
-
-        message.setWrapText(true);
-
-        invDialog
-            .getMessagePane()
-            .getChildren()
-            .add(message);
-
-        Credentials credentials = invDialog.showAndWait()
-            .filter(result -> !result.wasCanceled())
-            .map(result -> result.getCredentials())
-            .orElse(null);
-
-        if (credentials == null) {
-            return false;
-        }
-
-        ohte.domain.Application.getSingleton()
-            .createInventory(file.getAbsolutePath(), credentials);
-
-        return true;
-    }
-
     /**
      * Creates and displays {@link MainViewController the main view}.
      */
-    private void showMainView(Stage stage) {
+    private void showMainView() {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader()
                 .getResource("ui/MainView.fxml"));
 

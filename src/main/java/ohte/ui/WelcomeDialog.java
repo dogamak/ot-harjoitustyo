@@ -63,20 +63,12 @@ public class WelcomeDialog extends Dialog<InventoryAction> {
      * @param buttonType - ButtonType chosen by the user.
      */
     static InventoryAction convertResult(WelcomeDialog dialog, ButtonType buttonType) {
-        FileChooser chooser = new FileChooser();
-        Window window = dialog.getDialogPane().getScene().getWindow();
-
-        File file = null;
-        InventoryAction.Type type = null;
-
         if (buttonType == createButton) {
-            file = chooser.showSaveDialog(window);
-            type = InventoryAction.Type.CREATE;
+            return InventoryAction.CREATE;
         } else if (buttonType == openButton) {
-            file = chooser.showOpenDialog(window);
-            type = InventoryAction.Type.OPEN;
+            return InventoryAction.OPEN;
         }
 
-        return new InventoryAction(type, file);
+        return null;
     }
 }
