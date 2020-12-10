@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.File;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,9 +31,38 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) {
+        handleParameters();
         this.stage = stage;
         startupFlow();
         showMainView();
+    }
+
+    private void handleParameters() {
+        List<String> unnamed = getParameters().getUnnamed();
+        Map<String, String> named = getParameters().getNamed();
+
+        if (!unnamed.isEmpty()) {
+            file = new File(unnamed.get(0));
+        }
+
+        System.out.println(unnamed.stream().collect(Collectors.joining(", ")));
+
+        String username = named.get("user");
+        String password = named.get("password");
+
+        if (username != null && password != null) {
+            credentials = new Credentials(username, password);
+        }
+
+        String action = named.get("action");
+
+        System.out.println("U: " + username + " P: " + password + " A: " + action);
+
+        if ("create".equals(action)) {
+            startupAction = InventoryAction.CREATE;
+        } else if ("open".equals(action)) {
+            startupAction = InventoryAction.OPEN;
+        }
     }
 
     public void setStartupAction(InventoryAction action) {
@@ -69,8 +101,22 @@ public class Application extends javafx.application.Application {
                 showFileChooser();
             }
 
+            boolean canceled = false;
+
             if (credentials == null) {
-                authenticate();
+                canceled = promptForCredentials()
+                    .map(r -> {
+                        credentials = r.getCredentials();
+                        return r.wasCanceled();
+                    })
+                    .orElse(true);
+            }
+
+            if (canceled) {
+                credentials = null;
+            } else if (!authenticate(credentials)) {
+                credentials = null;
+                continue;
             }
 
             if (startupAction == null || file == null || credentials == null) {
@@ -83,23 +129,17 @@ public class Application extends javafx.application.Application {
         }
     }
 
-    private boolean authenticate() {
-        promptForCredentials();
-
-        if (credentials == null) {
-            return false;
-        }
-
+    private boolean authenticate(Credentials creds) {
         boolean success = false;
 
         if (startupAction == InventoryAction.CREATE) {
-            app.createInventory(file.getAbsolutePath(), credentials);
-            return true;
+            app.createInventory(file.getAbsolutePath(), creds);
+            success = true;
         } else if (startupAction == InventoryAction.OPEN) {
-            return app.openInventory(file.getAbsolutePath(), credentials);
+            success = app.openInventory(file.getAbsolutePath(), creds);
         }
 
-        return false;
+        return success;
     }
 
     private void showFileChooser() {
@@ -112,7 +152,7 @@ public class Application extends javafx.application.Application {
         }
     }
 
-    private void promptForCredentials() {
+    private Optional<CredentialsDialog.Result> promptForCredentials() {
         CredentialsDialog dialog;
 
         boolean isRetry = authTryCount > 0;
@@ -123,13 +163,10 @@ public class Application extends javafx.application.Application {
         } else if (startupAction == InventoryAction.CREATE) {
             dialog = createAccountCreationDialog();
         } else {
-            return;
+            return Optional.empty();
         }
 
-        credentials = dialog.showAndWait()
-            .filter(r -> !r.wasCanceled())
-            .map(r -> r.getCredentials())
-            .orElse(null);
+        return dialog.showAndWait();
     }
 
     private CredentialsDialog createUnlockCredentialsDialog(boolean retry) {

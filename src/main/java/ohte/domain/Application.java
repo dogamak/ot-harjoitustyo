@@ -170,6 +170,10 @@ public class Application {
 
         Account acc = storage.getAccountByUsername(credentials.getUsername());
 
+        if (acc == null) {
+            return false;
+        }
+
         boolean result = acc.checkPassword(credentials.getPassword());
 
         if (result) {
