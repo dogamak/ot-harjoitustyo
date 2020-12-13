@@ -27,3 +27,10 @@ delegoin vastuun tästä `Persister<T>`-rajapinnen toteutuksille.  Esimerkiksi
 `AccountSqlitePersister`, joka toteuttaa rajapinnan `Persister<Account>`
 tarkkailee käyttäjätunnusten joukon muutoksia ja reagoi niihin välittämällä
 muutokset SQLite-tietokantaan.
+
+Persistoidut objektit noudattavat JavaFX-tyyplistä käytäntöä, jossa niiden
+kentille on perinteisten gettereiden ja settereiden lisäksi n.s. property-getteri.
+Tämä getteri tarjoaa `Property`-rajapinnen kyseiseen kenttään. Tämän avulla kentän
+arvoa voidaan dynaamisesti muuttaa ja sen muutoksiin reagoida. Tämä mahdollistaa
+persistereiden reagoinnin myös objektien sisäisten kenttien muutoksiin, jotka nekin
+tallennetaan SQLite-tietokantaan.
