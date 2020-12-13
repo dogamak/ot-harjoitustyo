@@ -78,8 +78,6 @@ public class Application extends javafx.application.Application {
             file = new File(unnamed.get(0));
         }
 
-        System.out.println(unnamed.stream().collect(Collectors.joining(", ")));
-
         String username = named.get("user");
         String password = named.get("password");
 
@@ -88,8 +86,6 @@ public class Application extends javafx.application.Application {
         }
 
         String action = named.get("action");
-
-        System.out.println("U: " + username + " P: " + password + " A: " + action);
 
         if ("create".equals(action)) {
             startupAction = InventoryAction.CREATE;

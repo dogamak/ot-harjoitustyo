@@ -112,7 +112,6 @@ public class AccountTabController {
             .getSelectedItems()
             .stream()
             .forEach(account -> {
-                System.out.println("Removing account!");
                 app.removeAccount(account);
             });
     }

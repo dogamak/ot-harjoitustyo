@@ -78,8 +78,6 @@ public class MainViewController implements ChangeListener<Object> {
      */
     @Override
     public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-        System.out.println(newValue);
-
         Parent paneContent = null;
 
         if (newValue instanceof Account) {

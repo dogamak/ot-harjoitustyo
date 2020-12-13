@@ -108,8 +108,6 @@ public class AssetSqlitePersister extends SqlitePersister<Asset> {
     private void updateField(String column, int id, String value) {
         String sql = "UPDATE assets SET " + column + " = ? WHERE id = ?";
 
-        System.out.println(sql + " " + id + " " + value);
-
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
             stmt.setInt(2, id);
