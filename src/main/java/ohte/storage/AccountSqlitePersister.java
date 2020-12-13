@@ -13,15 +13,12 @@ import java.util.List;
 import javafx.collections.ObservableSet;
 
 /**
- * Implementation for persisting account data in a SQLite database.
+ * A {@link Persister} implementation for {@link Account Accounts} using SQLite as it's backend.
  */
 public class AccountSqlitePersister extends SqlitePersister<Account> {
+    /** {@inheritDoc} */
     public AccountSqlitePersister(Connection conn) {
       super(conn);
-    }
-
-    public Connection getConnection() {
-        return conn;
     }
 
     /**
@@ -61,6 +58,9 @@ public class AccountSqlitePersister extends SqlitePersister<Account> {
         return accounts;
     }
 
+    /**
+     * There are no editable fields in accounts currently.
+     */
     @Override
     void registerEntryListeners(Account entry) {}
 

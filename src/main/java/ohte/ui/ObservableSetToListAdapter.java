@@ -26,6 +26,8 @@ public class ObservableSetToListAdapter<E> extends ModifiableObservableListBase<
 
     /**
      * Wrap an {@link ObservableSet}.
+     *
+     * @param set The {@link ObservableSet} to wrap and adapt into an {@link ObservableList}.
      */
     public ObservableSetToListAdapter(ObservableSet<E> set) {
         this.set = set;
@@ -58,22 +60,38 @@ public class ObservableSetToListAdapter<E> extends ModifiableObservableListBase<
         }
     }
 
+    /**
+     * Required method by the abstract class {@link ModifiableObservableListBase}.
+     * Returns the value at a specified offset.
+     */
     @Override
     public E get(int index) {
         return list.get(index);
     }
 
+    /**
+     * Required method by the abstract class {@link ModifiableObservableListBase}.
+     * Returns the number of items contained in the list.
+     */
     @Override
     public int size() {
         return list.size();
     }
 
+    /**
+     * Required method by the abstract class {@link ModifiableObservableListBase}.
+     * Performs an add operation on the list.
+     */
     @Override
     public void doAdd(int index, E element) {
         list.add(index, element);
         set.add(element);
     }
 
+    /**
+     * Required method by the abstract class {@link ModifiableObservableListBase}.
+     * Performs a remove operation on the list.
+     */
     @Override
     public E doRemove(int index) {
         E element = list.remove(index);
@@ -81,6 +99,10 @@ public class ObservableSetToListAdapter<E> extends ModifiableObservableListBase<
         return element;
     }
 
+    /**
+     * Required method by the abstract class {@link ModifiableObservableListBase}.
+     * Performs an entry assignment operation on the list.
+     */
     @Override
     public E doSet(int index, E element) {
         E oldValue = list.get(index);

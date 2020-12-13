@@ -12,11 +12,16 @@ import javafx.beans.property.Property;
 
 import ohte.domain.Asset;
 
+/**
+ * A {@link Persister} implementation for {@link Asset Assets} using SQLite as it's backend.
+ */
 public class AssetSqlitePersister extends SqlitePersister<Asset> {
+    /** {@inheritDoc} */
     public AssetSqlitePersister(Connection conn) {
         super(conn);
     }
 
+    /** {@inheritDoc} */
     @Override
     void createTables() throws SQLException {
         try (Statement stmt = conn.createStatement()) {
@@ -32,6 +37,7 @@ public class AssetSqlitePersister extends SqlitePersister<Asset> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     List<Asset> loadInitialEntries() throws SQLException {
         ArrayList<Asset> assets = new ArrayList<>();
@@ -54,6 +60,7 @@ public class AssetSqlitePersister extends SqlitePersister<Asset> {
         return assets;
     }
 
+    /** {@inheritDoc} */
     @Override
     void registerEntryListeners(Asset asset) {
         registerFieldUpdater("manufacturer", asset.getId(), asset.getManufacturerProperty());
@@ -62,6 +69,7 @@ public class AssetSqlitePersister extends SqlitePersister<Asset> {
         registerFieldUpdater("hostname", asset.getId(), asset.getHostnameProperty());
     }
 
+    /** {@inheritDoc} */
     @Override
     void insertEntry(Asset asset) throws SQLException {
         PreparedStatement stmt = conn
@@ -77,12 +85,26 @@ public class AssetSqlitePersister extends SqlitePersister<Asset> {
         asset.setId(stmt.getGeneratedKeys().getInt(1));
     }
 
+    /**
+     * Registers a listener for a property, which calls {@link #updateField} on changes.
+     *
+     * @param column Name of the database column into which changes are synchronized.
+     * @param id Identifier of the {@link Asset} to whose this property belongs.
+     * @param property The property whose value should be updated into the database on changes.
+     */
     private void registerFieldUpdater(String column, int id, Property<String> property) {
         property.addListener((prop, oldValue, newValue) -> {
             this.updateField(column, id, newValue);
         });
     }
 
+    /**
+     * Executes an {@link UPDATE} statement.
+     * 
+     * @param column Name of the column to be updated.
+     * @param id Identifier of the {@link Asset} whose column is to be updated.
+     * @param value The new value for the column.
+     */
     private void updateField(String column, int id, String value) {
         String sql = "UPDATE assets SET " + column + " = ? WHERE id = ?";
 
@@ -97,6 +119,7 @@ public class AssetSqlitePersister extends SqlitePersister<Asset> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     void deleteEntry(Asset asset) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("DELETE FROM assets WHERE id = ?");

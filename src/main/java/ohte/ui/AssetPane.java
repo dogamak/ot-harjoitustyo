@@ -7,31 +7,52 @@ import javafx.scene.control.Label;
 
 import ohte.domain.Asset;
 
+/**
+ * Component for displaying contents for the right-hand-side
+ * Asset information pane in the main view.
+ */
 public class AssetPane extends VBox {
-  GridPane propertyGrid = new GridPane();
-  int rowCounter = 0;
+    /**
+     * Reference to the grid containing all property name-value pairs.
+     */
+    GridPane propertyGrid = new GridPane();
 
-  AssetPane(Asset asset) {
-    addPropertyRow("Model", asset.getModelProperty());
-    addPropertyRow("Manufacturer", asset.getManufacturerProperty());
-    addPropertyRow("Hostname", asset.getHostnameProperty());
-    addPropertyRow("Serial number", asset.getSerialNumberProperty());
+    /**
+     * Running counter of grid rows used when constructing the grid.
+     */
+    int rowCounter = 0;
 
-    getChildren().addAll(propertyGrid);
-  }
+    /**
+     * Create a pane and populate it with data from an {@link Asset}.
+     */
+    AssetPane(Asset asset) {
+        addPropertyRow("Model", asset.getModelProperty());
+        addPropertyRow("Manufacturer", asset.getManufacturerProperty());
+        addPropertyRow("Hostname", asset.getHostnameProperty());
+        addPropertyRow("Serial number", asset.getSerialNumberProperty());
 
-  private void addPropertyRow(String name, Property<String> property) {
-    Label label = new Label(name + ": ");
+        getChildren().addAll(propertyGrid);
+    }
 
-    EditableProperty<String> editable = new EditableProperty<>(
-        property,
-        EditableProperty.stringEditorFactory()
-    );
+    /**
+     * Add an row to the property grid with an label for the property name
+     * and an editable field for the value.
+     *
+     * @param name Human-readable and user-facing property name
+     * @param property Corresponding wrtiable property
+     */
+    private void addPropertyRow(String name, Property<String> property) {
+        Label label = new Label(name + ": ");
 
-    propertyGrid.getChildren().addAll(label, editable);
-    GridPane.setConstraints(label, 0, rowCounter);
-    GridPane.setConstraints(editable, 1, rowCounter);
+        EditableProperty<String> editable = new EditableProperty<>(
+                property,
+                EditableProperty.stringEditorFactory()
+                );
 
-    rowCounter++;
-  }
+        propertyGrid.getChildren().addAll(label, editable);
+        GridPane.setConstraints(label, 0, rowCounter);
+        GridPane.setConstraints(editable, 1, rowCounter);
+
+        rowCounter++;
+    }
 }

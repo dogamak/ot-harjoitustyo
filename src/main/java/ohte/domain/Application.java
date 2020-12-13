@@ -45,15 +45,27 @@ public class Application {
      */
     SimpleObjectProperty<Object> focusedObject = new SimpleObjectProperty<>(null);
 
+    /**
+     * Factory used to create the persister for {@link Account Accounts}.
+     */
     Function<String, Persister<Account>> accountPersisterFactory = this::createAccountPersister;
+
+    /**
+     * Factory used to create the persister for {@link Asset Assets}.
+     */
     Function<String, Persister<Asset>> assetPersisterFactory = this::createAssetPersister;
 
+    /**
+     * Handle to the JDBC connection.
+     */
     Connection conn;
 
     /**
      * Returns the global instance of {@link Application}.
      * 
      * Initializes the instance if not already initialized.
+     *
+     * @return A reference to a global {@link Application} instance
      *
      * @see #singleton
      */
@@ -67,6 +79,8 @@ public class Application {
 
     /**
      * Returns true if user has provided correct credentials and is authenticated.
+     *
+     * @return {@code true} if user has authenticated, {@code false} otherwise.
      */
     public boolean isAuthenticated() {
         return account != null;
@@ -77,6 +91,8 @@ public class Application {
      *
      * If the user has not authenticated, returns null.
      *
+     * @return The currently authenticate {@link Account}
+     *
      * @see #isAuthenticated
      */
     public Account getAccount() {
@@ -85,6 +101,8 @@ public class Application {
 
     /**
      * Get a reference to the {@link Storage} backend implementation.
+     *
+     * @return Reference to the {@link Storage} instance.
      *
      * @see Storage
      */
@@ -106,6 +124,8 @@ public class Application {
      * needs to determine the type of this object with `instanceof` or some other
      * method.
      *
+     * @return An observable property containing the focused object.
+     *
      * @see #focusedObject
      */
     public SimpleObjectProperty<Object> getFocused() {
@@ -120,10 +140,22 @@ public class Application {
      */
     public Application() {}
 
+    /**
+     * Creates an application with the provided {@link Storage} instance.
+     */
     Application(Storage storage) {
       this.storage = storage;
     }
 
+    /**
+     * Opens or creates a SQLite database at the specified path and
+     * synchronizes the application state to the database.
+     *
+     * All future modifications to the application state will also
+     * be synchronized to the database, where appropriate.
+     *
+     * @param path Path to the SQLite database.
+     */
     private void synchronizeToFile(String path) {
         try {
             Connection conn = DriverManager.getConnection("jdbc:sqlite:" + path);
@@ -141,8 +173,6 @@ public class Application {
      *
      * @param path        Path and filename for the inventory file to be created.
      * @param credentials Credentials for creating the superuser account.
-     *
-     * @see FileStorage#create
      */
     public void createInventory(String path, Credentials credentials) {
         synchronizeToFile(path);
@@ -162,8 +192,6 @@ public class Application {
      * @param  path        Path to an existing inventory file.
      * @param  credentials Credentials for authentication.
      * @return             True, if authentication is successfull.
-     *
-     * @see FileStorage#open
      */
     public boolean openInventory(String path, Credentials credentials) {
         synchronizeToFile(path);
@@ -183,6 +211,13 @@ public class Application {
         return result;
     }
 
+    /**
+     * Opens an SQLite database or returns an existing connection handle.
+     *
+     * @param path Path to an SQLite database.
+     *
+     * @return JDBC connection handle to the database
+     */
     private Connection getConnection(String path) {
       if (conn == null) {
         try {
@@ -196,22 +231,47 @@ public class Application {
       return conn;
     }
 
+    /**
+     * Factory for creating an persister for {@link Asset Assets}.
+     *
+     * @param path Path to an SQLite database
+     */
     private AssetSqlitePersister createAssetPersister(String path) {
       return new AssetSqlitePersister(getConnection(path));
     }
 
+    /**
+     * Factory for creating an persister for {@link Account Accounts}.
+     *
+     * @param path Path to an SQLite database
+     */
     private AccountSqlitePersister createAccountPersister(String path) {
       return new AccountSqlitePersister(getConnection(path));
     }
 
+    /**
+     * Change the factory used to create persister for {@link Asset Assets}.
+     *
+     * @param factory Persister factory for creating an {@link Asset} persister
+     */
     void setAssetPersisterFactory(Function<String, Persister<Asset>> factory) {
       assetPersisterFactory = factory;
     }
 
+    /**
+     * Change the factory used to create persister for {@link Account Accounts}.
+     *
+     * @param factory Persister factory for creating an {@link Account} persister
+     */
     void setAccountPersisterFactory(Function<String, Persister<Account>> factory) {
       accountPersisterFactory = factory;
     }
 
+    /**
+     * Create a new normal-role account with the provided credentials.
+     *
+     * @param credentials The credentials for the account to be created.
+     */
     public void createAccount(Credentials credentials) {
         Account normal = new Account(credentials.getUsername());
         normal.setRole(Account.Role.NORMAL);
@@ -220,14 +280,27 @@ public class Application {
         storage.saveAccount(normal);
     }
 
+    /**
+     * Removes an account.
+     *
+     * @param account The account to be removed
+     */
     public void removeAccount(Account account) {
         storage.removeAccount(account);
     }
 
+    /**
+     * Creates a new asset with blank initial properties.
+     */
     public void createAsset() {
         storage.saveAsset(new Asset());
     }
 
+    /**
+     * Removes an asset.
+     *
+     * @param asset The asset to be removed
+     */
     public void removeAsset(Asset asset) {
       storage.removeAsset(asset);
     }

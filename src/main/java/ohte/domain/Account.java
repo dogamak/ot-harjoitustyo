@@ -37,6 +37,12 @@ public class Account {
 
         /**
          * Converts a string to a {@link Role} value.
+         *
+         * @param value String representation of a {@link Role}
+         *
+         * @return Role represented by the string value
+         *
+         * @throws IllegalArgumentException if the string representation is invalid
          */
         public static Role fromString(String value) {
             if (value.equals("NORMAL")) {
@@ -73,6 +79,8 @@ public class Account {
     /**
      * Creates a new account with the provided username.
      * Other properties have default values.
+     *
+     * @param username Username for the created account.
      */
     public Account(String username) {
         this.username = username;
@@ -81,24 +89,38 @@ public class Account {
 
     /**
      * Hashes the password and sets the hash to the new value.
+     *
+     * @param cleartext Clear-text password for hasing.
      */
     public void setPassword(String cleartext) {
         String salt = BCrypt.gensalt(10);
         setPasswordHash(BCrypt.hashpw(cleartext, salt));
     }
 
+    /**
+     * Sets the password hash to already hashed value.
+     *
+     * @param hash Pre-hashed password
+     */
     public void setPasswordHash(String hash) {
         passwordHash = hash;
     }
 
+    /**
+     * Get the password hash. 
+     *
+     * @return BCrypt-hashed password
+     */
     public String getPasswordHash() {
         return passwordHash;
     }
 
     /**
-     * Compares the given cleartext passowrd against the stored passowrd hash.
+     * Compares the given clear-text passowrd against the stored passowrd hash.
      *
-     * @returns True if the password matches.
+     * @param cleartext The clear-text password to check agains
+     *
+     * @return True if the password matches.
      */
     public boolean checkPassword(String cleartext) {
         return BCrypt.checkpw(cleartext, passwordHash);
@@ -113,6 +135,8 @@ public class Account {
 
     /**
      * Returns the account's role.
+     *
+     * @return Account's {@link Role}
      */
     public Role getRole() {
         return role;
@@ -120,6 +144,8 @@ public class Account {
 
     /**
      * Returns the account's username.
+     *
+     * @return Account's username
      */
     public String getUsername() {
         return username;

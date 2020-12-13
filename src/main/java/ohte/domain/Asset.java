@@ -8,17 +8,30 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 
+/**
+ * Class for storing the data of an asset. 
+ *
+ * The setters and getters are self explanatory and follow the JavaFX bean naming convention.
+ * Getters ending with {@code Property} return a modifiable and observable {@link Property}
+ * reference to the value.
+ */
 public class Asset {
-    /**
-     * IP address of the machine.
-     */
+    /** IP address of the machine. */
     ListProperty<String> ipAddresses = new SimpleListProperty<>(FXCollections.emptyObservableList());
 
+    /** Hostname of the machine. Either local or a proper domain name. */
     ObjectProperty<String> hostname = new SimpleObjectProperty<>("");
+
+    /** Manufacturer of the machine. */
     ObjectProperty<String> manufacturer = new SimpleObjectProperty<>("");
+
+    /** Model of the machine. */
     ObjectProperty<String> model = new SimpleObjectProperty<>("");
+
+    /** Serial number of the machine */
     ObjectProperty<String> serialNumber = new SimpleObjectProperty<>("");
 
+    /** Internal identifier of the asset. */
     int id;
 
     public void setId(int id) {

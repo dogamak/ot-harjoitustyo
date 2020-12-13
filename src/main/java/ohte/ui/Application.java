@@ -22,13 +22,42 @@ import ohte.domain.Credentials;
  * Manages the startup UI flow and launches the main UI.
  */
 public class Application extends javafx.application.Application {
+    /**
+     * Inventory file to be created or opened.
+     */
     private File file;
+
+    /**
+     * Credentials for unlocking an inventory file or creating a superuser.
+     */
     private Credentials credentials;
+
+    /**
+     * Reference to the global {@link ohte.domain.Application} instance.
+     */
     private ohte.domain.Application app = ohte.domain.Application.getSingleton();
+
+    /**
+     * The startup action chosen by the user.
+     * Either {@code OPEN} or {@code CREATE}.
+     */
     private InventoryAction startupAction;
+
+    /**
+     * Counter of authentication attempts.
+     * Used to display a varying message to the user.
+     */
     private int authTryCount = 0;
+
+    /**
+     * Current JavaFX stage.
+     */
     private Stage stage;
 
+    /**
+     * Entry point of the UI code.
+     * Called by JavaFX after application initialization.
+     */
     @Override
     public void start(Stage stage) {
         handleParameters();
@@ -37,6 +66,10 @@ public class Application extends javafx.application.Application {
         showMainView();
     }
 
+    /**
+     * Checks the provided command-line parameters and
+     * populates the member fields accordingly.
+     */
     private void handleParameters() {
         List<String> unnamed = getParameters().getUnnamed();
         Map<String, String> named = getParameters().getNamed();
@@ -65,44 +98,45 @@ public class Application extends javafx.application.Application {
         }
     }
 
-    public void setStartupAction(InventoryAction action) {
-        startupAction = action;
-    }
-
-    public void setInventoryFile(File pfile) {
-        file = pfile;
-    }
-
-    public void setCredentials(Credentials pcreds) {
-        credentials = pcreds;
-    }
-
+    /**
+     * Trunk for launching the application.
+     *
+     * @param args Command-line arguments
+     */
     public static void main(String[] args) {
         launch();
     }
 
     /**
-     * Start the startup UI flow, which prompts for inventory file and credentials.
+     * Launch the startup UI flow. Skips initial prompts for
+     * values that were provided via command-line arguments.
      *
-     * The startup flow consists of two dialogs: {@link WelcomeDialog}
-     * and {@link InventoryDialog}.
+     * The startup flow consists of the following steps:
+     * <ol>
+     *     <li>Prompting for the desired action (open or create) using {@link WelcomeDialog}</li>
+     *     <li>Showing the appropriate file chooser dialog.</li>
+     *     <li>Prompt for account credentials using {@link CredentialsDialog}.</li>
+     * </ol>
      */
     private void startupFlow() {
         InventoryAction result;
 
         while (true) {
+            // Prompt for the desired action if not known.
             if (startupAction == null) {
                 startupAction = new WelcomeDialog()
                     .showAndWait()
                     .orElse(null);
             }
 
+            // Prompt for the inventory file if not known.
             if (file == null) {
                 showFileChooser();
             }
 
             boolean canceled = false;
 
+            // Prompt for credentials if not known.
             if (credentials == null) {
                 canceled = promptForCredentials()
                     .map(r -> {
@@ -113,12 +147,18 @@ public class Application extends javafx.application.Application {
             }
 
             if (canceled) {
+                // If user selects Cancel from the credentials dialog,
+                // clear the value for credentials, causing a re-prompt of all values.
                 credentials = null;
             } else if (!authenticate(credentials)) {
+                // If the user enters the wrong credentials, clear the credentials,
+                // but do not re-prompt for anything else.
                 credentials = null;
                 continue;
             }
 
+            // If any of the following values are not defined, clear them all an re-prompt.
+            // If all of them are known, return.
             if (startupAction == null || file == null || credentials == null) {
                 startupAction = null;
                 file = null;
@@ -129,6 +169,11 @@ public class Application extends javafx.application.Application {
         }
     }
 
+    /**
+     * Try to authenticate or create an account using the provided credentials.
+     *
+     * @return True if authentication or account creation was successfull.
+     */
     private boolean authenticate(Credentials creds) {
         boolean success = false;
 
@@ -142,6 +187,9 @@ public class Application extends javafx.application.Application {
         return success;
     }
 
+    /**
+     * Show file chooser with differing properties based on the selected inventory action.
+     */
     private void showFileChooser() {
         FileChooser chooser = new FileChooser();
 
@@ -152,6 +200,9 @@ public class Application extends javafx.application.Application {
         }
     }
 
+    /**
+     * Prompts for account credentials.
+     */
     private Optional<CredentialsDialog.Result> promptForCredentials() {
         CredentialsDialog dialog;
 
@@ -169,6 +220,10 @@ public class Application extends javafx.application.Application {
         return dialog.showAndWait();
     }
 
+    /**
+     * Constructs the {@link CredentialsDialog} with message appropriate
+     * for the action of opening an existing inventory file.
+     */
     private CredentialsDialog createUnlockCredentialsDialog(boolean retry) {
         CredentialsDialog dialog = new CredentialsDialog("Unlock");
 
@@ -186,6 +241,10 @@ public class Application extends javafx.application.Application {
         return dialog;
     }
 
+    /**
+     * Constructs the {@link CredentialsDialog} with message appropriate
+     * for the action of creating a new inventory file and superuser.
+     */
     private CredentialsDialog createAccountCreationDialog() {
         CredentialsDialog dialog = new CredentialsDialog("Create superuser");
 
@@ -203,30 +262,6 @@ public class Application extends javafx.application.Application {
             .add(message);
 
         return dialog;
-    }
-
-    private boolean openInventoryFile(File file) {
-        boolean success;
-        boolean first = true;
-
-        do {
-            Credentials credentials = createUnlockCredentialsDialog(!first)
-                .showAndWait()
-                .filter(r -> !r.wasCanceled())
-                .map(r -> r.getCredentials())
-                .orElse(null);
-
-            if (credentials == null) {
-                return false;
-            }
-
-            success = ohte.domain.Application.getSingleton()
-                .openInventory(file.getAbsolutePath(), credentials);
-
-            first = false;
-        } while (!success);
-
-        return true;
     }
 
     /**
