@@ -38,10 +38,11 @@ hyötyä käyttäjälleen.  Loput ominaisuuksista ovat lisäarvoa tuottavia omin
 
 ### Laitteistokirjanpito
  - [ ] Käyttäjä voi lisätä kirjanpitoon uusia laitteita, joilla on seuraavia tietueita: **(MVP) (DONE)**
-   - Valmistaja
+   - Valmistaja **(DONE)**
    - Malli **(MVP)**
    - Käyttöönottoajankohta
-   - Sarjanumero
+   - Hostname  **(DONE)**
+   - Sarjanumero  **(DONE)**
    - Käyttöjärjestelmä
    - Käyttöjärjestelmän versio
    - IP-osoite
@@ -51,8 +52,8 @@ hyötyä käyttäjälleen.  Loput ominaisuuksista ovat lisäarvoa tuottavia omin
  - [ ] Käyttäjä voi muokata kirjanpidossa olevan laitteen tietoja. **(MVP)**
 
 ### Ohjelmistokirjanpito
- - [ ] Käyttäjä voi kirjata laitekohtaisesti käytössä olevia ohjelmistoja. **(MVP)**
-   + Ohjelmiston nimi **(MVP)**
+ - [ ] Käyttäjä voi kirjata laitekohtaisesti käytössä olevia ohjelmistoja.
+   + Ohjelmiston nimi
    + Ohjelmiston versio
    + Ohjelmiston valmistaja
    + Ohjelmiston käyttämät portit tai URL, josta sovellus on käytettävissä.
