@@ -64,17 +64,7 @@ public class Account {
                 throw new RuntimeException("invalid internal representation for Role");
             }
         }
-
-        public String convertTo() {
-            return toString();
-        }
-
-        static public Role convertFrom(String value) {
-            return fromString(value);
-        }
     };
-
-    public Account() {}
 
     /**
      * Creates a new account with the provided username.

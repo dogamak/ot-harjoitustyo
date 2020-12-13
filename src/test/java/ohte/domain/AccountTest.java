@@ -24,4 +24,17 @@ public class AccountTest {
       Role.fromString("ILLEGAL");
     });
   }
+
+  @Test
+  public void accountEqualsBasedOnUsername() {
+      Account a1 = new Account("username");
+      a1.setRole(Role.SUPERUSER);
+      a1.setPassword("password1");
+
+      Account a2 = new Account("username");
+      a1.setRole(Role.NORMAL);
+      a1.setPassword("password2");
+
+      assertTrue(a1.equals(a2));
+  }
 }

@@ -1,6 +1,7 @@
 package ohte.domain;
 
 import java.util.List;
+import java.util.ArrayList;
 import javafx.beans.property.Property;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -17,7 +18,7 @@ import javafx.collections.FXCollections;
  */
 public class Asset {
     /** IP address of the machine. */
-    ListProperty<String> ipAddresses = new SimpleListProperty<>(FXCollections.emptyObservableList());
+    ListProperty<String> ipAddresses = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
 
     /** Hostname of the machine. Either local or a proper domain name. */
     ObjectProperty<String> hostname = new SimpleObjectProperty<>("");

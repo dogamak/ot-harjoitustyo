@@ -46,21 +46,6 @@ public class Application {
     SimpleObjectProperty<Object> focusedObject = new SimpleObjectProperty<>(null);
 
     /**
-     * Factory used to create the persister for {@link Account Accounts}.
-     */
-    Function<String, Persister<Account>> accountPersisterFactory = this::createAccountPersister;
-
-    /**
-     * Factory used to create the persister for {@link Asset Assets}.
-     */
-    Function<String, Persister<Asset>> assetPersisterFactory = this::createAssetPersister;
-
-    /**
-     * Handle to the JDBC connection.
-     */
-    Connection conn;
-
-    /**
      * Returns the global instance of {@link Application}.
      * 
      * Initializes the instance if not already initialized.
@@ -143,7 +128,7 @@ public class Application {
     /**
      * Creates an application with the provided {@link Storage} instance.
      */
-    Application(Storage storage) {
+    public Application(Storage storage) {
       this.storage = storage;
     }
 
@@ -209,62 +194,6 @@ public class Application {
         }
 
         return result;
-    }
-
-    /**
-     * Opens an SQLite database or returns an existing connection handle.
-     *
-     * @param path Path to an SQLite database.
-     *
-     * @return JDBC connection handle to the database
-     */
-    private Connection getConnection(String path) {
-      if (conn == null) {
-        try {
-          conn = DriverManager.getConnection("jdbc:sqlite:" + path);
-        } catch (SQLException sqle) {
-          sqle.printStackTrace();
-          return null;
-        }
-      }
-
-      return conn;
-    }
-
-    /**
-     * Factory for creating an persister for {@link Asset Assets}.
-     *
-     * @param path Path to an SQLite database
-     */
-    private AssetSqlitePersister createAssetPersister(String path) {
-      return new AssetSqlitePersister(getConnection(path));
-    }
-
-    /**
-     * Factory for creating an persister for {@link Account Accounts}.
-     *
-     * @param path Path to an SQLite database
-     */
-    private AccountSqlitePersister createAccountPersister(String path) {
-      return new AccountSqlitePersister(getConnection(path));
-    }
-
-    /**
-     * Change the factory used to create persister for {@link Asset Assets}.
-     *
-     * @param factory Persister factory for creating an {@link Asset} persister
-     */
-    void setAssetPersisterFactory(Function<String, Persister<Asset>> factory) {
-      assetPersisterFactory = factory;
-    }
-
-    /**
-     * Change the factory used to create persister for {@link Account Accounts}.
-     *
-     * @param factory Persister factory for creating an {@link Account} persister
-     */
-    void setAccountPersisterFactory(Function<String, Persister<Account>> factory) {
-      accountPersisterFactory = factory;
     }
 
     /**
