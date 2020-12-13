@@ -29,6 +29,10 @@ Persisteriluokat `AccountSqlitePersister` ja `AssetSqlitePersister` ovat sen sij
 yksikkötestattuja, ja niiden testeissä käytetään välimuistissa sijaitsevaa SQLite-tietokantaa
 joten testit vastaavan hyvin luokkien oikeaa käyttötapausta.
 
+### Testikattavuus
+
+![Testikattavuusraportti](./testcoverage.png)
+
 ## Järjestelmätestaus
 
 Sovelluksen järjestelmätestaus on suoritettu manuaalisesti kehitystyön yhteydessä.
